@@ -902,6 +902,9 @@
                     "Больше сила тока", "Меньше напряжение", "Меньше ЭДС", "Меньше сила тока"], correct: 3 },
             { id: 31, question: "Трансформатор является понижающим, если коэффициент трансформации", answers: [
                     "Меньше 1", "Больше 1", "Равен 1"], correct: 1 },
+            { id: 32, question: "Укажите правильную схему трансформатора", answers: [
+                    "Схема 1", "Схема 2"
+], correct: 0, isImage: true, images: ["schema1.png", "schema2.png"] },
             { id: 33, question: "Трансформатор применяется", answers: [
                     "Для преобразования электрических колебаний в звуковые",
                     "Для преобразования звуковых колебаний в электрические", "В сварочных работах",
@@ -1092,46 +1095,57 @@
         }
 
         function showQuestion() {
-            if (currentQuestionIndex >= currentTestQuestions.length) {
-                showResult();
-                return;
-            }
+    if (currentQuestionIndex >= currentTestQuestions.length) {
+        showResult();
+        return;
+    }
 
-            const q = currentTestQuestions[currentQuestionIndex];
+    const q = currentTestQuestions[currentQuestionIndex];
 
-            document.getElementById('questionNumber').textContent =
-                `Вопрос ${currentQuestionIndex + 1} из ${currentTestQuestions.length}`;
-            document.getElementById('originalNumber').textContent =
-                `Оригинальный №${q.id}`;
-            document.getElementById('questionText').textContent = q.question;
+    document.getElementById('questionNumber').textContent =
+        `Вопрос ${currentQuestionIndex + 1} из ${currentTestQuestions.length}`;
+    document.getElementById('originalNumber').textContent =
+        `Оригинальный №${q.id}`;
+    document.getElementById('questionText').textContent = q.question;
 
-            // Прогресс
-            const progress = (currentQuestionIndex / currentTestQuestions.length) * 100;
-            document.getElementById('progressFill').style.width = progress + '%';
+    const progress = (currentQuestionIndex / currentTestQuestions.length) * 100;
+    document.getElementById('progressFill').style.width = progress + '%';
 
-            // Ответы
-            const answersContainer = document.getElementById('answersContainer');
-            answersContainer.innerHTML = '';
+    const answersContainer = document.getElementById('answersContainer');
+    answersContainer.innerHTML = '';
 
-            q.answers.forEach((answer, index) => {
-                const div = document.createElement('div');
-                div.className = 'answer-option';
-                div.innerHTML = `
-                    <div class="radio"></div>
+    q.answers.forEach((answer, index) => {
+        const div = document.createElement('div');
+        div.className = 'answer-option';
+        
+        if (q.isImage && q.images) {
+            div.innerHTML = `
+                <div class="radio"></div>
+                <div style="display:flex; flex-direction:column; gap:8px; width:100%;">
                     <span>${answer}</span>
-                `;
-
-                if (userAnswers[currentQuestionIndex] === index) {
-                    div.classList.add('selected');
-                }
-
-                div.onclick = () => selectAnswer(index);
-                answersContainer.appendChild(div);
-            });
-
-            updateNavButtons();
-            startQuestionTimer();
+                    <img src="${q.images[index]}" alt="${answer}" style="max-width:100%; border-radius:8px; border:2px solid var(--border);">
+                </div>
+            `;
+            div.style.flexDirection = 'column';
+            div.style.alignItems = 'flex-start';
+        } else {
+            div.innerHTML = `
+                <div class="radio"></div>
+                <span>${answer}</span>
+            `;
         }
+
+        if (userAnswers[currentQuestionIndex] === index) {
+            div.classList.add('selected');
+        }
+
+        div.onclick = () => selectAnswer(index);
+        answersContainer.appendChild(div);
+    });
+
+    updateNavButtons();
+    startQuestionTimer();
+}
 
         function selectAnswer(index) {
             userAnswers[currentQuestionIndex] = index;
