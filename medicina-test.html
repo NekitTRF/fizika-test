@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест: Первая помощь и тактическая медицина</title>
+    <style>
+        :root {
+            --bg: #f5f5f5; --container-bg: #ffffff; --text: #333; --text-secondary: #666;
+            --border: #e0e0e0; --primary: #e74c3c; --primary-hover: #c0392b; --secondary: #e74c3c;
+            --answer-hover: #fdf0f0; --answer-selected: #fde8e8; --progress-bg: #e0e0e0;
+            --result-correct: #e8f8e8; --result-wrong: #fde8e8; --btn-prev: #f0f0f0;
+            --btn-prev-hover: #e0e0e0; --card-bg: #fdf0f0; --grade-excellent: #e8f5e9;
+            --grade-good: #e3f2fd; --grade-satisfactory: #fff3e0; --grade-poor: #ffebee;
+            --input-bg: #fff; --input-border: #e0e0e0; --shadow: rgba(0,0,0,0.1);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px;
+        }
+        .container {
+            background: var(--container-bg); border-radius: 20px; box-shadow: 0 20px 60px var(--shadow);
+            max-width: 850px; width: 100%; padding: 30px; animation: fadeIn 0.5s ease; position: relative;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .selection-screen h1 { text-align: center; color: var(--text); margin-bottom: 10px; font-size: 22px; }
+        .selection-screen .subtitle { text-align: center; color: var(--text-secondary); margin-bottom: 20px; font-size: 14px; }
+        .settings-panel {
+            background: var(--card-bg); border-radius: 12px; padding: 15px; margin-bottom: 20px;
+            display: flex; flex-wrap: wrap; gap: 15px; align-items: center; justify-content: center;
+        }
+        .settings-panel label { color: var(--text); font-size: 13px; }
+        .settings-panel input, .settings-panel select {
+            background: var(--input-bg); border: 1px solid var(--input-border); color: var(--text);
+            padding: 8px 12px; border-radius: 8px; font-size: 14px; width: 80px;
+        }
+        .selection-buttons { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 20px; }
+        .topic-btn {
+            padding: 20px; border: 2px solid var(--primary); background: var(--container-bg);
+            border-radius: 12px; cursor: pointer; transition: all 0.3s; font-size: 14px; color: var(--text);
+        }
+        .topic-btn:hover { background: var(--primary); color: white; transform: translateY(-3px); box-shadow: 0 10px 25px rgba(231,76,60,0.4); }
+        .topic-btn .range { font-weight: bold; font-size: 18px; display: block; margin-bottom: 5px; }
+        .topic-btn .theme { font-size: 12px; color: var(--text-secondary); }
+        .topic-btn:hover .theme { color: #fdd; }
+        .full-test-btn {
+            margin-top: 20px; padding: 18px; border: none;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white; border-radius: 12px; cursor: pointer; font-size: 16px; font-weight: bold;
+            transition: all 0.3s; width: 100%;
+        }
+        .full-test-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(231,76,60,0.5); }
+        .test-screen { display: none; }
+        .test-screen .progress-bar { height: 6px; background: var(--progress-bg); border-radius: 3px; margin-bottom: 20px; }
+        .test-screen .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary)); border-radius: 3px; transition: width 0.3s; }
+        .test-screen .question-meta { display: flex; justify-content: space-between; margin-bottom: 10px; color: var(--text-secondary); font-size: 13px; }
+        .test-screen .question { font-size: 16px; font-weight: bold; color: var(--text); margin-bottom: 20px; line-height: 1.5; }
+        .answers { display: flex; flex-direction: column; gap: 10px; }
+        .answer-option {
+            padding: 15px 20px; border: 2px solid var(--border); border-radius: 10px;
+            cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 12px; color: var(--text);
+        }
+        .answer-option:hover { border-color: var(--primary); background: var(--answer-hover); }
+        .answer-option.selected { border-color: var(--primary); background: var(--answer-selected); }
+        .answer-option .checkbox {
+            width: 20px; height: 20px; border: 2px solid var(--border); border-radius: 4px;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.3s;
+        }
+        .answer-option.selected .checkbox { border-color: var(--primary); background: var(--primary); }
+        .answer-option.selected .checkbox::after { content: '✓'; color: white; font-size: 14px; }
+        .nav-buttons { display: flex; gap: 10px; margin-top: 20px; }
+        .nav-btn { padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; transition: all 0.3s; }
+        .nav-btn.prev { background: var(--btn-prev); color: var(--text); }
+        .nav-btn.prev:hover { background: var(--btn-prev-hover); }
+        .nav-btn.next { background: var(--primary); color: white; flex: 1; }
+        .nav-btn.next:hover { background: var(--primary-hover); }
+        .nav-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .back-btn {
+            padding: 10px 20px; border: 1px solid var(--border); background: var(--container-bg);
+            color: var(--text); border-radius: 8px; cursor: pointer; font-size: 13px; margin-top: 10px;
+            transition: all 0.3s; width: 100%;
+        }
+        .back-btn:hover { background: var(--card-bg); }
+        .result-screen { display: none; }
+        .result-screen h2 { text-align: center; color: var(--text); margin-bottom: 20px; }
+        .result-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 25px; }
+        .result-card { background: var(--card-bg); padding: 20px; border-radius: 12px; text-align: center; }
+        .result-card .number { font-size: 28px; font-weight: bold; color: var(--primary); }
+        .result-card .label { font-size: 11px; color: var(--text-secondary); margin-top: 5px; }
+        .grade { text-align: center; font-size: 24px; font-weight: bold; margin-bottom: 20px; padding: 15px; border-radius: 12px; }
+        .grade.excellent { background: var(--grade-excellent); color: #2e7d32; }
+        .grade.good { background: var(--grade-good); color: #1565c0; }
+        .grade.satisfactory { background: var(--grade-satisfactory); color: #e65100; }
+        .grade.poor { background: var(--grade-poor); color: #c62828; }
+        .result-details { max-height: 300px; overflow-y: auto; margin-bottom: 20px; padding-right: 10px; }
+        .result-item { padding: 10px; border-bottom: 1px solid var(--border); font-size: 13px; color: var(--text); }
+        .result-item.correct { background: var(--result-correct); border-left: 3px solid #4caf50; }
+        .result-item.wrong { background: var(--result-wrong); border-left: 3px solid #e74c3c; }
+        .result-buttons { display: flex; gap: 10px; flex-wrap: wrap; }
+        .result-buttons button { flex: 1; padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; transition: all 0.3s; min-width: 120px; }
+        .btn-retry { background: var(--primary); color: white; }
+        .btn-reference { background: #fff3e0; color: #e65100; }
+        .btn-home { background: var(--btn-prev); color: var(--text); }
+        .reference-screen { display: none; }
+        .reference-screen h2 { text-align: center; margin-bottom: 20px; color: var(--text); }
+        .reference-content { max-height: 500px; overflow-y: auto; padding-right: 10px; }
+        .reference-item { padding: 12px; border-bottom: 1px solid var(--border); }
+        .reference-item .ref-question { font-weight: bold; margin-bottom: 5px; color: var(--text); }
+        .reference-item .ref-answer { color: #4caf50; padding-left: 10px; border-left: 3px solid #4caf50; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--progress-bg); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 3px; }
+        @media (max-width: 600px) {
+            .container { padding: 20px; }
+            .selection-buttons { grid-template-columns: 1fr; }
+            .result-summary { grid-template-columns: repeat(2, 1fr); }
+            .nav-buttons { flex-direction: column; }
+            .settings-panel { flex-direction: column; align-items: stretch; }
+            .settings-panel input, .settings-panel select { width: 100%; }
+        }
+        .hint {
+            font-size: 12px; color: #999; margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="app">
+        <div class="selection-screen" id="selectionScreen">
+            <h1>🚑 Первая помощь и тактическая медицина</h1>
+            <p class="subtitle">Тест: что делать, когда нет врачей рядом</p>
+            <div class="settings-panel">
+                <label>⏱ Секунд на вопрос:</label>
+                <input type="number" id="timePerQuestion" value="0" min="0" max="300" step="5">
+                <span style="font-size:11px;color:var(--text-secondary)">(0 = без таймера)</span>
+            </div>
+            <div class="selection-buttons">
+                <button class="topic-btn" onclick="startTest(1, 7)">
+                    <span class="range">Вопросы 1-7</span>
+                    <span class="theme">Аптечка, раны, кровотечения</span>
+                </button>
+                <button class="topic-btn" onclick="startTest(8, 14)">
+                    <span class="range">Вопросы 8-14</span>
+                    <span class="theme">Алгоритмы, травмы, состояния</span>
+                </button>
+                <button class="topic-btn" onclick="startTest(15, 20)">
+                    <span class="range">Вопросы 15-20</span>
+                    <span class="theme">Носилки, ДТП, сопоставление</span>
+                </button>
+            </div>
+            <button class="full-test-btn" onclick="startTest(1, 20)">📋 Полный тест (20 вопросов)</button>
+            <button class="topic-btn" style="margin-top:10px;border-color:#4caf50;color:#4caf50;width:100%;" onclick="showReference()">📖 Справочник (все ответы)</button>
+        </div>
+
+        <div class="test-screen" id="testScreen">
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 0%"></div></div>
+            <div class="question-meta">
+                <span id="questionNumber"></span>
+                <span id="originalNumber"></span>
+            </div>
+            <div class="question" id="questionText"></div>
+            <div class="answers" id="answersContainer"></div>
+            <p class="hint" id="questionHint"></p>
+            <div class="nav-buttons">
+                <button class="nav-btn prev" id="prevBtn" onclick="prevQuestion()">← Назад</button>
+                <button class="nav-btn next" id="nextBtn" onclick="nextQuestion()" disabled>Выберите ответ</button>
+            </div>
+            <button class="back-btn" onclick="confirmExitTest()">↩ Вернуться к выбору</button>
+        </div>
+
+        <div class="result-screen" id="resultScreen">
+            <h2>Результаты теста</h2>
+            <div class="result-summary">
+                <div class="result-card"><div class="number" id="totalQuestions">0</div><div class="label">Вопросов</div></div>
+                <div class="result-card"><div class="number" id="correctAnswers">0</div><div class="label">Правильных</div></div>
+                <div class="result-card"><div class="number" id="percentage">0%</div><div class="label">Процент</div></div>
+                <div class="result-card"><div class="number" id="timeElapsed">0:00</div><div class="label">Затрачено</div></div>
+            </div>
+            <div class="grade" id="grade"></div>
+            <div class="result-details" id="resultDetails"></div>
+            <div class="result-buttons">
+                <button class="btn-retry" onclick="retryTest()">🔄 Пройти заново</button>
+                <button class="btn-reference" onclick="showReference()">📖 Справочник</button>
+                <button class="btn-home" onclick="goToSelection()">🏠 К выбору тем</button>
+            </div>
+        </div>
+
+        <div class="reference-screen" id="referenceScreen">
+            <h2>📖 Справочник - Все ответы</h2>
+            <div class="reference-content" id="referenceContent"></div>
+            <button class="back-btn" style="margin-top:15px; width:100%;" onclick="goToSelection()">↩ К выбору тем</button>
+        </div>
+    </div>
+
+    <script>
+        // Все вопросы
+        const allQuestions = [
+            // 1 - Аптечка (выбор нескольких)
+            { id: 1, question: "Что обязательно должно быть в домашней аптечке? (выберите несколько вариантов)", multi: true, answers: [
+                "Бинт стерильный", "Перекись водорода", "Зелёнка", "Жгут кровоостанавливающий",
+                "Активированный уголь", "Термометр", "Шприцы", "Ножницы"
+            ], correct: [0,1,2,4,5,7] },
+            // 2 - Пульс
+            { id: 2, question: "Как правильно измерить пульс у человека?", multi: false, answers: [
+                "Приложить 2 пальца к запястью, считать удары 30 секунд и умножить на 2",
+                "Приложить ладонь к груди и считать удары 15 секунд",
+                "Измерить тонометром",
+                "Приложить 2 пальца к шее (сонной артерии)"
+            ], correct: [0] },
+            // 3 - Промыть рану (выбор нескольких)
+            { id: 3, question: "Как правильно промыть рану чистой водой? (выберите несколько)", multi: true, answers: [
+                "Лить воду прямо на рану из бутылки",
+                "Поливать водой рядом с раной, чтобы вода стекала на рану",
+                "Промывать от центра раны к краям",
+                "Промывать от краёв к центру"
+            ], correct: [0,2] },
+            // 4 - Обработка перекисью
+            { id: 4, question: "Как правильно обработать рану перекисью водорода?", multi: false, answers: [
+                "Залить перекись прямо на рану",
+                "Смочить ватный диск перекисью и обработать кожу ВОКРУГ раны",
+                "Смочить ватный диск перекисью и обработать САМУ рану"
+            ], correct: [1] },
+            // 5 - Повязка (выбор нескольких)
+            { id: 5, question: "Как правильно наложить обычную бинтовую повязку? (выберите несколько)", multi: true, answers: [
+                "Бинтовать от узкого места к широкому",
+                "Бинтовать от широкого места к узкому",
+                "Каждый следующий виток перекрывает предыдущий на половину",
+                "Каждый следующий виток перекрывает предыдущий полностью"
+            ], correct: [0,2] },
+            // 6 - Сопоставление
+            { id: 6, question: "Сопоставьте тип кровотечения с его признаком:", multi: false, match: true, answers: [
+                "Артериальное → алая кровь бьёт фонтаном (выберите этот вариант, если считаете верным)",
+                "Венозное → тёмная кровь течёт равномерно (выберите этот вариант, если считаете верным)",
+                "Оба варианта верны",
+                "Оба варианта неверны"
+            ], correct: [2] },
+            // 7 - 3 способа без жгута (выбор нескольких)
+            { id: 7, question: "Выберите 3 правильных способа остановки кровотечения БЕЗ жгута:", multi: true, answers: [
+                "Прямое давление на рану", "Прижатие артерии выше раны", "Давящая повязка",
+                "Обработка перекисью", "Поднятие конечности вверх", "Наложение холода", "Обработка зелёнкой"
+            ], correct: [0,1,2] },
+            // 8 - MARCH
+            { id: 8, question: "Что означает алгоритм MARCH в тактической медицине?", multi: false, answers: [
+                "Massive bleeding — Airways — Respiration — Circulation — Hypothermia",
+                "Massive bleeding — Airways — Respiration — Circulation — Head injury",
+                "Massive bleeding — Airways — Respiration — Circulation — Hypothermia — Head injury"
+            ], correct: [0] },
+            // 9 - Пневмоторакс
+            { id: 9, question: "Что такое пневмоторакс?", multi: false, answers: [
+                "Скопление воздуха в плевральной полости",
+                "Скопление крови в плевральной полости",
+                "Перелом рёбер"
+            ], correct: [0] },
+            // 10 - Окклюзионная повязка
+            { id: 10, question: "Как правильно сделать окклюзионную повязку из подручного пакета?", multi: false, answers: [
+                "Приложить чистый пакет к ране и закрепить пластырем с ТРЁХ сторон",
+                "Приложить чистый пакет к ране и закрепить пластырем со ВСЕХ сторон",
+                "Обмотать грудь пакетом и закрепить бинтом"
+            ], correct: [0] },
+            // 11 - Внутреннее кровотечение (выбор нескольких)
+            { id: 11, question: "Выберите признаки внутреннего кровотечения:", multi: true, answers: [
+                "Холодный липкий пот", "Бледность кожи", "Учащённый пульс",
+                "Повышенная температура", "Красные пятна на коже"
+            ], correct: [0,1,2] },
+            // 12 - Ожог (выбор нескольких)
+            { id: 12, question: "Как правильно действовать при ожоге? (выберите несколько)", multi: true, answers: [
+                "Охладить ожог под холодной водой 10-15 минут",
+                "Смазать маслом",
+                "Нанести пантенол или противоожоговую мазь",
+                "Проколоть пузыри"
+            ], correct: [0,2] },
+            // 13 - Обморок (выбор нескольких)
+            { id: 13, question: "Как правильно действовать при обмороке? (выберите несколько)", multi: true, answers: [
+                "Поднять ноги пострадавшего выше головы",
+                "Дать понюхать нашатырь",
+                "Брызнуть холодной водой в лицо",
+                "Обеспечить приток свежего воздуха"
+            ], correct: [0,3] },
+            // 14 - Тепловой удар (выбор нескольких)
+            { id: 14, question: "Как действовать при тепловом ударе? (выберите несколько)", multi: true, answers: [
+                "Переместить пострадавшего в тень, охлаждать компрессами",
+                "Дать горячий чай",
+                "Вызвать скорую помощь"
+            ], correct: [0,2] },
+            // 15 - Носилки
+            { id: 15, question: "Как правильно сделать носилки из палок и одежды?", multi: false, answers: [
+                "Продеть палки через рукава 2-3 курток, застегнуть одежду",
+                "Связать палки верёвкой крест-накрест",
+                "Просто положить одежду между палок"
+            ], correct: [0] },
+            // 16 - Ранение конечности
+            { id: 16, question: "Алгоритм помощи при ранении конечности:", multi: false, answers: [
+                "Прямое давление → давящая повязка → жгут (если не помогло)",
+                "Жгут → давящая повязка → прямое давление",
+                "Давящая повязка → прямое давление → жгут"
+            ], correct: [0] },
+            // 17 - Ранение живота
+            { id: 17, question: "Алгоритм помощи при ранении живота:", multi: false, answers: [
+                "Не вправлять органы, накрыть влажной тканью, закрепить повязкой",
+                "Вправить органы обратно, наложить тугую повязку",
+                "Обработать перекисью и зашить"
+            ], correct: [0] },
+            // 18 - Ранение груди
+            { id: 18, question: "Алгоритм помощи при ранении груди:", multi: false, answers: [
+                "Окклюзионная повязка → полусидячее положение → вызов скорой",
+                "Тугая повязка → положение лёжа → вызов скорой",
+                "Обработка перекисью → наложение пластыря"
+            ], correct: [0] },
+            // 19 - ДТП без аптечки (выбор нескольких)
+            { id: 19, question: "Вы стали свидетелем ДТП. Аптечки нет. Ваши действия? (выберите несколько)", multi: true, answers: [
+                "Использовать чистую ткань или одежду для перевязки",
+                "Ничего не трогать до приезда скорой",
+                "Прижать рану рукой, если нет бинта",
+                "Сделать повязку из футболки",
+                "Использовать ремень как жгут"
+            ], correct: [0,2,3,4] },
+            // 20 - Сопоставление
+            { id: 20, question: "Сопоставьте вид травмы с правильным действием:", multi: false, match: true, answers: [
+                "Ожог → охладить водой (выберите, если верно)",
+                "Кровотечение → прижать рану (выберите, если верно)",
+                "Обморок → поднять ноги (выберите, если верно)",
+                "Все три варианта верны",
+                "Ни один вариант не верен"
+            ], correct: [3] }
+        ];
+
+        let currentTestQuestions = [];
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+        let testStartTime = null;
+        let testEndTime = null;
+
+        function showScreen(screenId) {
+            ['selectionScreen','testScreen','resultScreen','referenceScreen'].forEach(id => {
+                document.getElementById(id).style.display = 'none';
+            });
+            if (screenId) document.getElementById(screenId).style.display = 'block';
+        }
+
+        function goToSelection() { showScreen('selectionScreen'); }
+
+        function confirmExitTest() {
+            if (currentQuestionIndex < currentTestQuestions.length && userAnswers.some(a => a !== null)) {
+                if (confirm('У вас есть неотвеченные вопросы. Уверены, что хотите выйти?')) { goToSelection(); }
+            } else { goToSelection(); }
+        }
+
+        function startTest(startId, endId) {
+            const filtered = allQuestions.filter(q => q.id >= startId && q.id <= endId);
+            if (filtered.length === 0) { alert('Нет вопросов'); return; }
+            currentTestQuestions = [...filtered];
+            currentQuestionIndex = 0;
+            userAnswers = new Array(currentTestQuestions.length).fill(null);
+            testStartTime = new Date();
+            testEndTime = null;
+            showScreen('testScreen');
+            showQuestion();
+        }
+
+        function showQuestion() {
+            if (currentQuestionIndex >= currentTestQuestions.length) { showResult(); return; }
+            const q = currentTestQuestions[currentQuestionIndex];
+            document.getElementById('questionNumber').textContent = `Вопрос ${currentQuestionIndex + 1} из ${currentTestQuestions.length}`;
+            document.getElementById('originalNumber').textContent = `№${q.id}`;
+            document.getElementById('questionText').textContent = q.question;
+            document.getElementById('questionHint').textContent = q.multi ? '(можно выбрать несколько ответов)' : (q.match ? '(выберите один правильный вариант)' : '');
+            const progress = (currentQuestionIndex / currentTestQuestions.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            const container = document.getElementById('answersContainer');
+            container.innerHTML = '';
+            q.answers.forEach((answer, index) => {
+                const div = document.createElement('div');
+                div.className = 'answer-option';
+                const isMulti = q.multi;
+                div.innerHTML = `<div class="${isMulti ? 'checkbox' : 'radio'}"></div><span>${answer}</span>`;
+                if (isMulti) {
+                    if (userAnswers[currentQuestionIndex] && userAnswers[currentQuestionIndex].includes(index)) div.classList.add('selected');
+                    div.onclick = () => {
+                        if (!userAnswers[currentQuestionIndex]) userAnswers[currentQuestionIndex] = [];
+                        const idx = userAnswers[currentQuestionIndex].indexOf(index);
+                        if (idx >= 0) userAnswers[currentQuestionIndex].splice(idx, 1);
+                        else userAnswers[currentQuestionIndex].push(index);
+                        div.classList.toggle('selected');
+                        document.getElementById('nextBtn').disabled = userAnswers[currentQuestionIndex].length === 0;
+                    };
+                } else {
+                    if (userAnswers[currentQuestionIndex] === index) div.classList.add('selected');
+                    div.onclick = () => {
+                        userAnswers[currentQuestionIndex] = index;
+                        document.querySelectorAll('.answer-option').forEach((opt, i) => opt.classList.toggle('selected', i === index));
+                        document.getElementById('nextBtn').disabled = false;
+                    };
+                }
+                container.appendChild(div);
+            });
+            document.getElementById('nextBtn').textContent = currentQuestionIndex === currentTestQuestions.length - 1 ? 'Завершить' : 'Вперед →';
+            document.getElementById('nextBtn').disabled = q.multi ? true : false;
+            document.getElementById('prevBtn').disabled = currentQuestionIndex === 0;
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < currentTestQuestions.length - 1) {
+                currentQuestionIndex++;
+                showQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                showQuestion();
+            }
+        }
+
+        function formatTime(seconds) {
+            const min = Math.floor(seconds / 60);
+            const sec = Math.floor(seconds % 60);
+            return `${min}:${sec.toString().padStart(2, '0')}`;
+        }
+
+        function showResult() {
+            testEndTime = new Date();
+            const totalTimeSeconds = Math.round((testEndTime - testStartTime) / 1000);
+            showScreen('resultScreen');
+            let correctCount = 0;
+            currentTestQuestions.forEach((q, i) => {
+                const user = userAnswers[i];
+                if (!user) return;
+                if (q.multi) {
+                    const correct = q.correct.sort().join(',');
+                    const given = [...user].sort().join(',');
+                    if (correct === given) correctCount++;
+                } else {
+                    if (user === q.correct[0]) correctCount++;
+                }
+            });
+            const total = currentTestQuestions.length;
+            const percentage = Math.round((correctCount / total) * 100);
+            document.getElementById('totalQuestions').textContent = total;
+            document.getElementById('correctAnswers').textContent = correctCount;
+            document.getElementById('percentage').textContent = percentage + '%';
+            document.getElementById('timeElapsed').textContent = formatTime(totalTimeSeconds);
+            let gradeText, gradeClass;
+            if (percentage >= 85) { gradeText = '5 (Отлично)'; gradeClass = 'excellent'; }
+            else if (percentage >= 70) { gradeText = '4 (Хорошо)'; gradeClass = 'good'; }
+            else if (percentage >= 50) { gradeText = '3 (Удовлетворительно)'; gradeClass = 'satisfactory'; }
+            else { gradeText = '2 (Неудовлетворительно)'; gradeClass = 'poor'; }
+            const gradeEl = document.getElementById('grade');
+            gradeEl.textContent = `Оценка: ${gradeText} | Время: ${formatTime(totalTimeSeconds)}`;
+            gradeEl.className = 'grade ' + gradeClass;
+            const detailsEl = document.getElementById('resultDetails');
+            detailsEl.innerHTML = '';
+            currentTestQuestions.forEach((q, i) => {
+                const div = document.createElement('div');
+                const user = userAnswers[i];
+                let isCorrect = false;
+                if (q.multi) {
+                    const correct = q.correct.sort().join(',');
+                    const given = user ? [...user].sort().join(',') : '';
+                    isCorrect = correct === given;
+                } else {
+                    isCorrect = user === q.correct[0];
+                }
+                div.className = 'result-item ' + (isCorrect ? 'correct' : 'wrong');
+                let text = `${q.id}. ${isCorrect ? '✓' : '✗'} `;
+                if (user !== null && user !== undefined) {
+                    if (q.multi) text += `Ваш выбор: ${user.map(i => q.answers[i]).join(', ')}`;
+                    else text += `Ваш ответ: ${q.answers[user]}`;
+                } else {
+                    text += 'Нет ответа';
+                }
+                if (!isCorrect) {
+                    if (q.multi) text += ` | Правильно: ${q.correct.map(i => q.answers[i]).join(', ')}`;
+                    else text += ` | Правильно: ${q.answers[q.correct[0]]}`;
+                }
+                div.textContent = text;
+                detailsEl.appendChild(div);
+            });
+        }
+
+        function retryTest() {
+            userAnswers = new Array(currentTestQuestions.length).fill(null);
+            currentQuestionIndex = 0;
+            testStartTime = new Date();
+            testEndTime = null;
+            showScreen('testScreen');
+            showQuestion();
+        }
+
+        function showReference() {
+            showScreen('referenceScreen');
+            const content = document.getElementById('referenceContent');
+            content.innerHTML = '';
+            allQuestions.forEach(q => {
+                const div = document.createElement('div');
+                div.className = 'reference-item';
+                const correctAnswers = q.correct.map(i => q.answers[i]).join(', ');
+                div.innerHTML = `<div class="ref-question">${q.id}. ${q.question}</div><div class="ref-answer">✓ ${correctAnswers}</div>`;
+                content.appendChild(div);
+            });
+        }
+
+        showScreen('selectionScreen');
+    </script>
+</body>
+</html>

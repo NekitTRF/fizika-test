@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Тесты</title>
+    <title>Физика — выбор темы</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -34,49 +34,58 @@
             margin-bottom: 30px;
             font-size: 14px;
         }
-        .subjects {
+        .topics {
             display: flex;
             flex-direction: column;
             gap: 15px;
         }
-        .subject-btn {
+        .topic-btn {
             display: block;
             padding: 20px;
             border: 2px solid #667eea;
             border-radius: 12px;
             text-decoration: none;
             color: #333;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
             transition: all 0.3s;
         }
-        .subject-btn:hover {
+        .topic-btn:hover {
             background: #667eea;
             color: #fff;
             transform: translateY(-3px);
             box-shadow: 0 10px 25px rgba(102,126,234,0.4);
         }
-        .subject-btn .icon { font-size: 28px; display: block; margin-bottom: 5px; }
+        .back-btn {
+            margin-top: 20px;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #f5f5f5;
+            cursor: pointer;
+            font-size: 14px;
+            color: #666;
+            text-decoration: none;
+            display: inline-block;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>📚 Тесты по предметам</h1>
-        <p class="subtitle">Выберите предмет для тестирования</p>
-        <div class="subjects">
-            <a href="fizika.html" class="subject-btn">
-                <span class="icon">⚡</span>
-                Физика
+        <h1>⚡ Физика</h1>
+        <p class="subtitle">Выберите тему для тестирования</p>
+        <div class="topics">
+            <a href="test-elektromagnitnye-kolebania.html" class="topic-btn">
+                🔄 Электромагнитные колебания. Генератор. Трансформатор
             </a>
-            <a href="medicina.html" class="subject-btn">
-                <span class="icon">🔬</span>
-                Медицина
+            <a href="test-radiosvyaz.html" class="topic-btn">
+                📡 Радиосвязь и телевидение
             </a>
-            <a href="navigacia.html" class="subject-btn">
-                <span class="icon">🧭</span>
-                Навигация
+            <a href="test-volnovaya-optika.html" class="topic-btn" style="border-color: #48bb78; background: #f0fff4;">
+                🌊 Волновая оптика (Интерференция, дифракция, дисперсия)
             </a>
         </div>
+        <a href="index.html" class="back-btn">↩ На главную</a>
     </div>
 </body>
 </html>
