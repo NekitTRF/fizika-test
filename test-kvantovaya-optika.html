@@ -336,34 +336,46 @@
         <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Тёмный/светлый режим">🌙</button>
 
         <div class="selection-screen" id="selectionScreen">
-            <h1>🔬 Квантовая оптика</h1>
-            <p class="subtitle">Фотоэффект, фотоны, давление света, задачи</p>
+    <h1>🔬 Квантовая оптика</h1>
+    <p class="subtitle">Фотоэффект, фотоны, давление света, задачи</p>
 
-            <div class="settings-panel">
-                <label>⏱ Секунд на вопрос:</label>
-                <input type="number" id="timePerQuestion" value="0" min="0" max="300" step="5">
-                <span style="font-size:11px;color:var(--text-secondary)">(0 = без таймера)</span>
-            </div>
+    <div class="settings-panel">
+        <label>⏱ Секунд на вопрос:</label>
+        <input type="number" id="timePerQuestion" value="0" min="0" max="300" step="5">
+        <span style="font-size:11px;color:var(--text-secondary)">(0 = без таймера)</span>
+    </div>
 
-            <div class="selection-buttons">
-                <button class="topic-btn" onclick="startFullTest()">
-                    <span class="range">Полный тест</span>
-                    <span class="theme">41 вопрос + 6 задач</span>
-                </button>
-                <button class="topic-btn" onclick="startTheoryOnly()">
-                    <span class="range">Только теория</span>
-                    <span class="theme">Вопросы 1-41</span>
-                </button>
-                <button class="topic-btn" onclick="startProblemsOnly()">
-                    <span class="range">Только задачи</span>
-                    <span class="theme">6 задач</span>
-                </button>
-            </div>
+    <div class="selection-buttons">
+        <button class="topic-btn" onclick="startTest(1, 10)">
+            <span class="range">Вопросы 1-10</span>
+            <span class="theme">Фотоны, энергия кванта</span>
+        </button>
+        <button class="topic-btn" onclick="startTest(11, 20)">
+            <span class="range">Вопросы 11-20</span>
+            <span class="theme">Давление света, фотоэффект</span>
+        </button>
+        <button class="topic-btn" onclick="startTest(21, 30)">
+            <span class="range">Вопросы 21-30</span>
+            <span class="theme">Законы фотоэффекта, красная граница</span>
+        </button>
+        <button class="topic-btn" onclick="startTest(31, 41)">
+            <span class="range">Вопросы 31-41</span>
+            <span class="theme">Внутренний фотоэффект, применение</span>
+        </button>
+    </div>
 
-            <button class="random-btn" style="margin-top:5px; border-color:#4caf50; color:#4caf50;" onclick="showReference()">
-                📖 Справочник (все ответы)
-            </button>
-        </div>
+    <button class="full-test-btn" onclick="startTest(1, 41)">
+        📋 Полный тест (41 вопрос)
+    </button>
+
+    <button class="random-btn" onclick="startTest(42, 47)">
+        🧮 Только задачи (6 шт)
+    </button>
+
+    <button class="random-btn" style="margin-top:5px; border-color:#4caf50; color:#4caf50;" onclick="showReference()">
+        📖 Справочник (все ответы)
+    </button>
+</div>
 
         <div class="test-screen" id="testScreen">
             <div class="timer-bar" id="timerBar" style="display:none;">
@@ -510,22 +522,18 @@
             } else { stopTimer(); goToSelection(); }
         }
 
-        function startFullTest() { startTestWithFilter(q => true); }
-        function startTheoryOnly() { startTestWithFilter(q => q.id <= 41); }
-        function startProblemsOnly() { startTestWithFilter(q => q.id >= 42); }
-
-        function startTestWithFilter(filter) {
-            const filtered = allQuestions.filter(filter);
-            if (filtered.length === 0) { alert('Нет вопросов'); return; }
-            currentTestQuestions = [...filtered];
-            currentQuestionIndex = 0;
-            userAnswers = new Array(currentTestQuestions.length).fill(null);
-            timePerQuestion = parseInt(document.getElementById('timePerQuestion').value) || 0;
-            testStartTime = new Date();
-            testEndTime = null;
-            showScreen('testScreen');
-            showQuestion();
-        }
+function startTest(startId, endId) {
+    const filtered = allQuestions.filter(q => q.id >= startId && q.id <= endId);
+    if (filtered.length === 0) { alert('Нет вопросов'); return; }
+    currentTestQuestions = [...filtered];
+    currentQuestionIndex = 0;
+    userAnswers = new Array(currentTestQuestions.length).fill(null);
+    timePerQuestion = parseInt(document.getElementById('timePerQuestion').value) || 0;
+    testStartTime = new Date();
+    testEndTime = null;
+    showScreen('testScreen');
+    showQuestion();
+}
 
         function startQuestionTimer() {
             stopTimer();
