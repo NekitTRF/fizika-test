@@ -1,133 +1,133 @@
-!DOCTYPE html
-html lang=ru
-head
-    meta charset=UTF-8
-    meta name=viewport content=width=device-width, initial-scale=1.0
-    titleФизика — выбор темыtitle
-    style
-         { margin 0; padding 0; box-sizing border-box; }
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Физика — выбор темы</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family 'Arial', sans-serif;
-            background linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height 100vh;
-            display flex;
-            justify-content center;
-            align-items center;
-            padding 20px;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
         }
         .container {
-            background #fff;
-            border-radius 20px;
-            box-shadow 0 20px 60px rgba(0,0,0,0.3);
-            max-width 550px;
-            width 100%;
-            padding 40px 30px;
-            text-align center;
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 550px;
+            width: 100%;
+            padding: 40px 30px;
+            text-align: center;
         }
         h1 {
-            font-size 28px;
-            margin-bottom 10px;
-            color #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+            color: #333;
         }
         .subtitle {
-            color #666;
-            margin-bottom 30px;
-            font-size 14px;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
         }
         .topics {
-            display flex;
-            flex-direction column;
-            gap 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
         }
         .topic-btn {
-            display block;
-            padding 20px;
-            border 2px solid #667eea;
-            border-radius 12px;
-            text-decoration none;
-            color #333;
-            font-size 16px;
-            font-weight bold;
-            transition all 0.3s;
-            text-align left;
-            background #fff;
+            display: block;
+            padding: 20px;
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            text-decoration: none;
+            color: #333;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s;
+            text-align: left;
+            background: #fff;
         }
-        .topic-btnhover {
-            background #667eea;
-            color #fff;
-            transform translateY(-3px);
-            box-shadow 0 10px 25px rgba(102,126,234,0.4);
+        .topic-btn:hover {
+            background: #667eea;
+            color: #fff;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102,126,234,0.4);
         }
         .topic-btn .icon {
-            font-size 24px;
-            margin-right 12px;
-            display inline-block;
+            font-size: 24px;
+            margin-right: 12px;
+            display: inline-block;
         }
         .topic-btn .title {
-            display inline-block;
-            vertical-align middle;
+            display: inline-block;
+            vertical-align: middle;
         }
         .topic-btn .description {
-            font-size 12px;
-            font-weight normal;
-            display block;
-            margin-top 8px;
-            color #888;
+            font-size: 12px;
+            font-weight: normal;
+            display: block;
+            margin-top: 8px;
+            color: #888;
         }
-        .topic-btnhover .description {
-            color #e0e0e0;
+        .topic-btn:hover .description {
+            color: #e0e0e0;
         }
         .back-btn {
-            margin-top 20px;
-            padding 12px;
-            border 1px solid #ddd;
-            border-radius 8px;
-            background #f5f5f5;
-            cursor pointer;
-            font-size 14px;
-            color #666;
-            text-decoration none;
-            display inline-block;
-            transition all 0.3s;
+            margin-top: 20px;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #f5f5f5;
+            cursor: pointer;
+            font-size: 14px;
+            color: #666;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s;
         }
-        .back-btnhover {
-            background #e0e0e0;
+        .back-btn:hover {
+            background: #e0e0e0;
         }
         hr {
-            margin 20px 0;
-            border none;
-            border-top 1px solid #eee;
+            margin: 20px 0;
+            border: none;
+            border-top: 1px solid #eee;
         }
-    style
-head
-body
-    div class=container
-        h1⚡ Физикаh1
-        p class=subtitleВыберите тему для тестированияp
-        div class=topics
-            a href=test-elektromagnitnye-kolebania.html class=topic-btn
-                span class=icon🔄span
-                span class=titleЭлектромагнитные колебанияspan
-                span class=descriptionГенератор, трансформатор, колебательный контурspan
-            a
-            a href=test-radiosvyaz.html class=topic-btn
-                span class=icon📡span
-                span class=titleРадиосвязь и телевидениеspan
-                span class=descriptionЭлектромагнитные волны, антенна, радиолокацияspan
-            a
-            a href=test-volnovaya-optika.html class=topic-btn style=border-color #48bb78;
-                span class=icon🌊span
-                span class=titleВолновая оптикаspan
-                span class=descriptionИнтерференция, дифракция, дисперсия, поляризацияspan
-            a
-            a href=test-kvantovaya-optika.html class=topic-btn style=border-color #e74c3c; background #fff5f5;
-                span class=icon⚛️span
-                span class=titleКвантовая оптикаspan
-                span class=descriptionФотоэффект, фотоны, давление света, корпускулярно-волновой дуализмspan
-            a
-        div
-        hr
-        a href=index.html class=back-btn↩ На главнуюa
-    div
-body
-html
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚡ Физика</h1>
+        <p class="subtitle">Выберите тему для тестирования</p>
+        <div class="topics">
+            <a href="test-elektromagnitnye-kolebania.html" class="topic-btn">
+                <span class="icon">🔄</span>
+                <span class="title">Электромагнитные колебания</span>
+                <span class="description">Генератор, трансформатор, колебательный контур</span>
+            </a>
+            <a href="test-radiosvyaz.html" class="topic-btn">
+                <span class="icon">📡</span>
+                <span class="title">Радиосвязь и телевидение</span>
+                <span class="description">Электромагнитные волны, антенна, радиолокация</span>
+            </a>
+            <a href="test-volnovaya-optika.html" class="topic-btn" style="border-color: #48bb78;">
+                <span class="icon">🌊</span>
+                <span class="title">Волновая оптика</span>
+                <span class="description">Интерференция, дифракция, дисперсия, поляризация</span>
+            </a>
+            <a href="test-kvantovaya-optika.html" class="topic-btn" style="border-color: #e74c3c; background: #fff5f5;">
+                <span class="icon">⚛️</span>
+                <span class="title">Квантовая оптика</span>
+                <span class="description">Фотоэффект, фотоны, давление света, корпускулярно-волновой дуализм</span>
+            </a>
+        </div>
+        <hr>
+        <a href="index.html" class="back-btn">↩ На главную</a>
+    </div>
+</body>
+</html>
